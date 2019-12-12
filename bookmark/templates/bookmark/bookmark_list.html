@@ -1,0 +1,61 @@
+{% extends 'Base.html' %}
+
+{% block title %} 리스트 페이지 {% endblock %}
+
+{% block content%}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col"> NUM </th>
+                <th scope="col"> SITE </th>
+                <th scope="col"> URL </th>
+                <th scope="col"> MODIFY </th>
+                <th scope="col"> DELETE </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bookmark in object_list %} <!--object_list 라고 되어있는건 디폴트값 -->
+                <tr>
+                    <td>{{ forloop.counter }} </td>
+                    <td><a href="detail/{{ bookmark.id }}">{{ bookmark.site_name }}</a> </td>
+                    <td><a href="{{ bookmark.url }}">{{ bookmark.url }}</a> </td>
+                    <td><a href="update/{{ bookmark.id }}" class="btn btn-success">수정</a> </td>
+                    <td><a href="delete/{{ bookmark.id }}" class="btn btn-danger">삭제</a> </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+       <ul class="pagination justify-content-center pagination-sm">
+           {% if page_obj.has_previous %} <!--앞으로 가는 버튼을 만들어 줍니다. 지금 뿌릴 페이지가 있는가? 체크-->
+               <li class="page-item">
+                   <a class="page-link" href="{% url 'list' %}?page={{ page_obj.previous_page_number }}" tabindex="-1">Previous</a>
+               </li>
+           {% else %}
+               <li class="page-item disabled"> <!--색상이 회색으로 뜹니다-->
+                   <a class="page-link" href="#" tabindex="-1">Previous</a>
+               </li>
+           {% endif %}
+           {% for object in page_obj.paginator.page_range %} <!--계속 숫자버튼을 생성해 줍니다-->
+               <li class="page-item {% if page_obj.number == forloop.counter %}disabled{% endif %}">
+                   <a class="page-link" href="{{ request.path }}?page={{ forloop.counter }}">{{ forloop.counter }}</a>
+               </li>
+           {% endfor %}
+           {% if page_obj.has_next %} <!--뒤로가는 버튼을 만들어줘요. -->
+               <li class="page-item">
+                   <a class="page-link" href="{% url 'list' %}?page={{ page_obj.next_page_number }}">Next</a>
+               </li>
+           {% else %}
+               <li class="page-item disabled">
+                   <a class="page-link" href="#">Next</a>
+               </li>
+           {% endif %}
+       </ul>
+   {% endif %}
+
+    <div class="btn-group">
+        <a href="add/" class="btn btn-info">북마크 추가</a>
+    </div>
+{% endblock%}
+
